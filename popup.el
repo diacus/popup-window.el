@@ -1,12 +1,36 @@
 ;;; popup.el --- Runs helper tool within popup window -*- lexical-binding: t; -*-
-;;
+
+;; Copyright (C) 2026 Diacus Magnuz
+
 ;; Author: Diacus Magnuz <diacus.magnuz@gmail.com>
+;; Maintainer: Diacus Magnuz <diacus.magnuz@gmail.com>
 ;; URL: https://github.com/diacus/popup.el
+;; Version: 0.1.0
+;; Package-Requires: ((emacs "24.3"))
+;; Keywords: tools convenience
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 ;;; Commentary:
 ;;
 ;; popup.el runs a custom repl inside a temporary popup window
 ;;
 ;;; Code:
+(require 'cl-lib)
+
 (defmacro make-repl-popup (repl-function)
   "Run REPL-FUNCTION that inside a pop-up window."
   `(lambda (&rest args)
@@ -34,4 +58,5 @@
                     ;; Kill the buffer, which automatically closes the side window
                     (kill-buffer buf)))))))))))
 
+(provide 'popup)
 ;;; popup.el ends here

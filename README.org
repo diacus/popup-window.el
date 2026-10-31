@@ -1,0 +1,77 @@
+#+TITLE: popup.el
+
+popup.el provides the ~make-repl-popup~ macro, which wraps a
+REPL-launching function so the REPL runs in a bottom side window
+instead of taking over your current window.  The buffer and its
+window are cleaned up automatically when the REPL process exits.
+
+* Usage
+
+Wrap your REPL-launching function with ~make-repl-popup~:
+
+#+begin_src emacs-lisp
+  (require 'popup)
+  (require 'ielm)
+
+  (defun my/open-ielm ()
+    "Open ielm in a popup window."
+    (interactive)
+    (funcall (make-repl-popup #'ielm)))
+#+end_src
+
+The wrapped function works like the original one, including its
+~&rest~ arguments, but any buffer it creates named =*...*= is
+displayed in a bottom side window taking 30% of the frame height.
+
+When the REPL process exits, its buffer is killed, which closes
+the popup window with it.
+
+* How it works
+
+~make-repl-popup~ expands to an interactive lambda that, in three
+steps:
+
+1. Binds the ~display-buffer-alist~ so that any buffer whose name
+   matches =\*.*\*= is shown via ~display-buffer-in-side-window~ in
+   a bottom side window, then runs the wrapped REPL function.
+2. Identifies the REPL buffer by diffing ~(buffer-list)~ before
+   and after the call.
+3. Attaches a process sentinel that kills the buffer when the
+   process dies.
+
+Caveats worth knowing:
+
+- The ~display-buffer-alist~ binding matches every =*...*= buffer,
+  so a REPL that opens auxiliary buffers as the buffer being
+  focused will pop those up too.  Only the buffer that is popped
+  up most recently among the new buffers is treated as the REPL.
+- The REPL buffer is identified as the most recently used of the
+  newly created buffers, so it relies on the REPL function being
+  the one that displays its own buffer.
+- The cleanup sentinel only fires after a clean process exit.
+
+* Installation
+
+This is a single-file package without a manifest yet.  Put
+~popup.el~ on your ~load-path~ and ~(require 'popup)~.
+
+* Running the tests
+
+From the repository root:
+
+#+begin_src shell
+  emacs -Q --batch -L . -l test/popup-test.el -f ert-run-tests-batch-and-exit
+#+end_src
+
+A byte-compile check is also useful:
+
+#+begin_src shell
+  emacs -Q --batch -L . -f batch-byte-compile popup.el
+#+end_src
+
+This is an MVP; there is no build system or package manifest (no
+Cask) yet.
+
+* License
+
+GNU General Public License version 3.  See the [[file:LICENSE][LICENSE]] file.

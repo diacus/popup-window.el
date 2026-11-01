@@ -5,7 +5,8 @@
 ;; Author: Diacus Magnuz <diacus.magnuz@gmail.com>
 ;; Maintainer: Diacus Magnuz <diacus.magnuz@gmail.com>
 ;; URL: https://github.com/diacus/popup.el
-;; Version: 0.1.0
+;; Version: 0.2.0
+;; Package-Version: 20261101.45
 ;; Package-Requires: ((emacs "24.3"))
 ;; Keywords: tools convenience
 
@@ -40,6 +41,11 @@
                (display-buffer-in-side-window)
                (side . bottom)
                (window-height . 0.3))))
+           ;; Some REPLs switch with `switch-to-buffer' (multi-vterm
+           ;; does), which never consults `display-buffer-alist'
+           ;; unless this option is on: without it the popup never
+           ;; happens and the buffer takes over the current window.
+           (switch-to-buffer-obey-display-actions t)
            (old-buffers (buffer-list)))
        ;; 1. Run the REPL function
        (apply ,repl-function args)

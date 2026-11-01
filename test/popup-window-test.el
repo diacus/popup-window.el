@@ -90,6 +90,32 @@ Return PREDICATE's last value."
 
 ;;; Buffer display
 
+(ert-deftest popup-window-test/pops-up-repls-that-switch-buffers ()
+  "A REPL ending in `switch-to-buffer' should pop up too.
+multi-vterm displays its fresh buffer that way, and plain
+`switch-to-buffer' ignores the popup's `display-buffer-alist'
+unless `switch-to-buffer-obey-display-actions' is on for the
+call."
+  :tags '(regression)
+  (let ((fn (make-repl-popup
+             (lambda (&rest _args)
+               (setq popup-window-test--repl-buf
+                     (get-buffer-create popup-window-test--repl-buffer-name))
+               (let ((proc (start-process "popup-window-test-repl"
+                                          popup-window-test--repl-buf
+                                          popup-window-test--sleep "10")))
+                 (push proc popup-window-test--processes))
+               (switch-to-buffer popup-window-test--repl-buf)))))
+    (funcall fn)
+    (unwind-protect
+        (let ((window (get-buffer-window popup-window-test--repl-buf)))
+          (should (buffer-live-p popup-window-test--repl-buf))
+          (should (window-live-p window))
+          ;; The popup is the whole point: the buffer must not take
+          ;; over the current window.
+          (should (eq (window-parameter window 'window-side) 'bottom)))
+      (popup-window-test--cleanup))))
+
 (ert-deftest popup-window-test/displays-buffer-in-bottom-side-window ()
   "The REPL buffer should be displayed in a bottom side window."
   (let ((fn (make-repl-popup (popup-window-test--make-repl "10"))))

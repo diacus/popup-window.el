@@ -1,6 +1,6 @@
-#+TITLE: popup.el
+#+TITLE: popup-window.el
 
-popup.el provides the ~make-repl-popup~ macro, which wraps a
+popup-window.el provides the ~make-repl-popup~ macro, which wraps a
 REPL-launching function so the REPL runs in a bottom side window
 instead of taking over your current window.  The buffer and its
 window are cleaned up automatically when the REPL process exits.
@@ -10,7 +10,7 @@ window are cleaned up automatically when the REPL process exits.
 Wrap your REPL-launching function with ~make-repl-popup~:
 
 #+begin_src emacs-lisp
-  (require 'popup)
+  (require 'popup-window)
   (require 'ielm)
 
   (defun my/open-ielm ()
@@ -53,7 +53,7 @@ Caveats worth knowing:
 * Installation
 
 This is a single-file package without a manifest yet.  Put
-~popup.el~ on your ~load-path~ and ~(require 'popup)~.
+~popup-window.el~ on your ~load-path~ and ~(require 'popup-window)~.
 
 * Running the tests
 
@@ -66,7 +66,7 @@ From the repository root:
 A byte-compile check is also useful:
 
 #+begin_src shell
-  emacs -Q --batch -L . -f batch-byte-compile popup.el
+  emacs -Q --batch -L . -f batch-byte-compile popup-window.el
 #+end_src
 
 This is an MVP; there is no build system or package manifest (no

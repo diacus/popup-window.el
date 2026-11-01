@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository
 
-Single-file Emacs Lisp package: `popup.el`. It provides the `make-repl-popup` macro, which wraps a REPL-launching function so the REPL runs in a bottom side window, and arranges for the buffer and window to be cleaned up when the REPL process exits.
+Single-file Emacs Lisp package: `popup-window.el`. It provides the `make-repl-popup` macro, which wraps a REPL-launching function so the REPL runs in a bottom side window, and arranges for the buffer and window to be cleaned up when the REPL process exits.
 
 ## Commands
 
-- Byte-compile check (catches syntax/compile warnings): `emacs -Q --batch -L . -f batch-byte-compile popup.el`
-- Run the ERT test suite: `emacs -Q --batch -L . -l test/popup-test.el -f ert-run-tests-batch-and-exit`
+- Byte-compile check (catches syntax/compile warnings): `emacs -Q --batch -L . -f batch-byte-compile popup-window.el`
+- Run the ERT test suite: `emacs -Q --batch -L . -l test/popup-window-test.el -f ert-run-tests-batch-and-exit`
 - There is no build system or package manifest (no Cask). The repo is currently an MVP.
 - Use `-Q` on batch invocations: site-start files in this environment load broken config fragments that interfere with batch Emacs.
 
@@ -24,8 +24,8 @@ Single-file Emacs Lisp package: `popup.el`. It provides the `make-repl-popup` ma
 Constraints to keep in mind when modifying:
 - The `display-buffer-alist` regex matches all `*...*` buffers, not just the REPL's; a REPL that opens auxiliary `*foo*` buffers will also pop them up.
 - The REPL is located via `car` of the buffer diff, so ordering of new buffers matters.
-- The macro requires `cl-set-difference` at runtime, loaded via `(require 'cl-lib)` in popup.el; lexical binding is enabled.
+- The macro requires `cl-set-difference` at runtime, loaded via `(require 'cl-lib)` in popup-window.el; lexical binding is enabled.
 
 ## Testing
 
-`test/popup-test.el` (ERT) drives the macro with fake REPL functions that spawn `sleep` processes in a scratch buffer, so behavior is exercised headlessly in batch. Note that `(funcall (make-repl-popup ...))` returns the value of `set-process-sentinel` (or nil), not the REPL buffer — the tests reach the buffer via a variable set inside the fake REPL itself.
+`test/popup-window-test.el` (ERT) drives the macro with fake REPL functions that spawn `sleep` processes in a scratch buffer, so behavior is exercised headlessly in batch. Note that `(funcall (make-repl-popup ...))` returns the value of `set-process-sentinel` (or nil), not the REPL buffer — the tests reach the buffer via a variable set inside the fake REPL itself.

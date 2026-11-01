@@ -1,4 +1,4 @@
-;;; popup.el --- Runs helper tool within popup window -*- lexical-binding: t; -*-
+;;; popup-window.el --- Runs helper tool within popup window -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2026 Diacus Magnuz
 
@@ -26,7 +26,7 @@
 
 ;;; Commentary:
 ;;
-;; popup.el runs a custom repl inside a temporary popup window
+;; popup-window.el runs a custom repl inside a temporary popup window
 ;;
 ;;; Code:
 (require 'cl-lib)
@@ -58,5 +58,5 @@
                     ;; Kill the buffer, which automatically closes the side window
                     (kill-buffer buf)))))))))))
 
-(provide 'popup)
-;;; popup.el ends here
+(provide 'popup-window)
+;;; popup-window.el ends here

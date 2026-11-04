@@ -4,10 +4,9 @@
 
 ;; Author: Diacus Magnuz <diacus.magnuz@gmail.com>
 ;; Maintainer: Diacus Magnuz <diacus.magnuz@gmail.com>
-;; URL: https://github.com/diacus/popup.el
+;; URL: https://github.com/diacus/popup-window.el
 ;; Version: 0.2.0
-;; Package-Version: 20261101.45
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: tools convenience
 
 ;; This file is not part of GNU Emacs.

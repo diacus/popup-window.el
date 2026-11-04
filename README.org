@@ -22,7 +22,21 @@ Wrap your REPL-launching function with ~make-repl-popup~:
 The wrapped function works like the original one, including its
 ~&rest~ arguments, but any buffer it creates named =*...*= is
 displayed in a bottom side window taking 30% of the frame height
-by default.  Change ~popup-window-height~ to customize it — a
+by default.
+
+Wrapping an interactive command that prompts for its arguments
+also keeps the prompt: when you invoke the wrapper without
+arguments, the original command runs through its own interactive
+form.  ~term~, for example, prompts for the program to run:
+
+#+begin_src emacs-lisp
+  (defun my/term-popup ()
+    "Open a term in a popup window."
+    (interactive)
+    (funcall (make-repl-popup #'term)))
+#+end_src
+
+Change ~popup-window-height~ to customize the popup height — a
 float between 0 and 1 is a fraction of the frame height, an
 integer a fixed number of lines:
 

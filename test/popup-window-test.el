@@ -87,9 +87,12 @@ Return PREDICATE's last value."
     (should (member '(interactive) expansion))))
 
 (ert-deftest popup-window-test/expansion-applies-args-to-repl-function ()
-  "The expansion should apply ARGS to the REPL function."
+  "The expansion should bind the REPL function once and apply ARGS to it.
+The binding also guards against double evaluation of a non-constant
+REPL-FUNCTION argument."
   (let ((printed (prin1-to-string (macroexpand-1 '(make-repl-popup 'foo-repl)))))
-    (should (string-match-p "(apply[^)]*foo-repl[^)]*args)" printed))))
+    (should (string-match-p "repl-fn '?foo-repl" printed))
+    (should (string-match-p "(apply repl-fn args)" printed))))
 
 (ert-deftest popup-window-test/forwards-args-to-repl-function ()
   "Arguments the popup is called with should reach the REPL function.
@@ -100,6 +103,37 @@ this one exercises the runtime `apply'."
     (setq popup-window-test--seen-args nil)
     (funcall fn "foo" 42)
     (should (equal popup-window-test--seen-args '("foo" 42)))))
+
+;;; Interactive commands
+
+(ert-deftest popup-window-test/command-called-without-args-runs-interactively ()
+  "A wrapped command invoked without args should run its own interactive form.
+`term' has one required argument (the program to run) and normally
+gets it from a prompt in its interactive spec; calling the wrapper
+without arguments used to pass none and fail with
+`wrong-number-of-arguments'.  The interactive spec here returns the
+value statically so the batch run never needs to prompt."
+  (let* ((fn (make-repl-popup
+              (lambda (sleep-seconds)
+                (interactive (list "10"))
+                (setq popup-window-test--seen-args sleep-seconds)
+                (setq popup-window-test--repl-buf
+                      (get-buffer-create popup-window-test--repl-buffer-name))
+                (let ((proc (start-process "popup-window-test-repl"
+                                           popup-window-test--repl-buf
+                                           popup-window-test--sleep
+                                           sleep-seconds)))
+                  (push proc popup-window-test--processes))
+                (pop-to-buffer popup-window-test--repl-buf))))
+         (popup-window-test--seen-args nil))
+    (funcall fn)
+    (unwind-protect
+        (progn
+          (should (equal popup-window-test--seen-args "10"))
+          (should (buffer-live-p popup-window-test--repl-buf))
+          (should (window-live-p
+                   (get-buffer-window popup-window-test--repl-buf))))
+      (popup-window-test--cleanup))))
 
 ;;; Buffer display
 

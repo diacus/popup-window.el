@@ -56,7 +56,8 @@ way, as the height of the popup window itself."
   "Run REPL-FUNCTION that inside a pop-up window."
   `(lambda (&rest args)
      (interactive)
-     (let ((display-buffer-alist
+     (let ((repl-fn ,repl-function)
+           (display-buffer-alist
             `(("\\*.*\\*"
                (display-buffer-in-side-window)
                (side . ,popup-window-side)
@@ -67,8 +68,14 @@ way, as the height of the popup window itself."
            ;; happens and the buffer takes over the current window.
            (switch-to-buffer-obey-display-actions t)
            (old-buffers (buffer-list)))
-       ;; 1. Run the REPL function
-       (apply ,repl-function args)
+       ;; 1. Run the REPL function.  When no arguments were given and it
+       ;; is a command (e.g. `term', which prompts for the program to
+       ;; run), run it through its own interactive form, so the prompt
+       ;; supplies the arguments; `apply' would pass none and fail with
+       ;; "Wrong number of arguments".
+       (if (and (null args) (commandp repl-fn))
+           (call-interactively repl-fn)
+         (apply repl-fn args))
        ;; 2. Identify the newly created REPL buffer
        (let* ((new-buffers (cl-set-difference (buffer-list) old-buffers))
               (repl-buf (car new-buffers))

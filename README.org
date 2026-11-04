@@ -30,6 +30,18 @@ integer a fixed number of lines:
   (setq popup-window-height 0.5)
 #+end_src
 
+The popup appears at the bottom of the frame by default; set
+~popup-window-side~ to ~top~ to display it at the top instead:
+
+#+begin_src emacs-lisp
+  (setq popup-window-side 'top)
+#+end_src
+
+Both options and their valid values can also be set interactively
+through the Customize interface: ~M-x customize-option~ with the
+option's name, or ~M-x customize-group popup-window~ to see them
+together.
+
 When the REPL process exits, its buffer is killed, which closes
 the popup window with it.
 

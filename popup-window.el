@@ -44,6 +44,14 @@ integer is a fixed number of lines."
                  (integer :tag "Lines"))
   :group 'popup-window)
 
+(defcustom popup-window-side 'bottom
+  "Where the popup side window is displayed.
+Either `bottom' or `top'.  `popup-window-height' applies either
+way, as the height of the popup window itself."
+  :type '(radio (const :tag "Bottom of the frame" bottom)
+                (const :tag "Top of the frame" top))
+  :group 'popup-window)
+
 (defmacro make-repl-popup (repl-function)
   "Run REPL-FUNCTION that inside a pop-up window."
   `(lambda (&rest args)
@@ -51,7 +59,7 @@ integer is a fixed number of lines."
      (let ((display-buffer-alist
             `(("\\*.*\\*"
                (display-buffer-in-side-window)
-               (side . bottom)
+               (side . ,popup-window-side)
                (window-height . ,popup-window-height))))
            ;; Some REPLs switch with `switch-to-buffer' (multi-vterm
            ;; does), which never consults `display-buffer-alist'

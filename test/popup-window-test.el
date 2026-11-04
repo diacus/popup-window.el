@@ -122,6 +122,21 @@ this one exercises the runtime `apply'."
                       (* 0.5 (frame-height) 0.9))))
       (popup-window-test--cleanup))))
 
+(ert-deftest popup-window-test/side-defaults-to-bottom ()
+  "`popup-window-side' should default to `bottom'."
+  (should (eq popup-window-side 'bottom)))
+
+(ert-deftest popup-window-test/side-option-is-honored ()
+  "The popup should appear at the top when `popup-window-side' is `top'."
+  (let ((popup-window-side 'top)
+        (fn (make-repl-popup (popup-window-test--make-repl "10"))))
+    (funcall fn)
+    (unwind-protect
+        (let ((window (get-buffer-window popup-window-test--repl-buf)))
+          (should (window-live-p window))
+          (should (eq (window-parameter window 'window-side) 'top)))
+      (popup-window-test--cleanup))))
+
 (ert-deftest popup-window-test/pops-up-repls-that-switch-buffers ()
   "A REPL ending in `switch-to-buffer' should pop up too.
 multi-vterm displays its fresh buffer that way, and plain

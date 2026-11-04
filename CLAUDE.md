@@ -17,7 +17,7 @@ Single-file Emacs Lisp package: `popup-window.el`. It provides the `make-repl-po
 
 `make-repl-popup` (the only definition) works in three steps:
 
-1. Binds a dynamic `display-buffer-alist` so any buffer whose name matches `\*.*\*` is shown via `display-buffer-in-side-window` (bottom side, height `popup-window-height`, a fraction of the frame or a number of lines, defaulting to 0.3), then calls the wrapped REPL function.
+1. Binds a dynamic `display-buffer-alist` so any buffer whose name matches `\*.*\*` is shown via `display-buffer-in-side-window` (side `popup-window-side`, `bottom` by default; height `popup-window-height`, a fraction of the frame or a number of lines, defaulting to 0.3), then calls the wrapped REPL function.
 2. Identifies the REPL buffer by diffing `(buffer-list)` before/after the call — this relies on the REPL function creating exactly one new buffer as its *first* new buffer.
 3. Attaches a process sentinel that kills the buffer (closing the window) when the process event string matches `status|exited|finished`.
 

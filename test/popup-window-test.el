@@ -103,6 +103,25 @@ this one exercises the runtime `apply'."
 
 ;;; Buffer display
 
+(ert-deftest popup-window-test/height-defaults-to-0-3 ()
+  "`popup-window-height' should default to 0.3."
+  (should (equal popup-window-height 0.3)))
+
+(ert-deftest popup-window-test/height-option-is-honored ()
+  "The displayed popup should honor a customized `popup-window-height'."
+  (let ((popup-window-height 0.5)
+        (fn (make-repl-popup (popup-window-test--make-repl "10"))))
+    (funcall fn)
+    (unwind-protect
+        (let ((window (get-buffer-window popup-window-test--repl-buf)))
+          (should (window-live-p window))
+          (should (eq (window-parameter window 'window-side) 'bottom))
+          ;; Allow a couple of lines of slack for rounding and
+          ;; `window-min-height' clamping.
+          (should (>= (window-total-height window)
+                      (* 0.5 (frame-height) 0.9))))
+      (popup-window-test--cleanup))))
+
 (ert-deftest popup-window-test/pops-up-repls-that-switch-buffers ()
   "A REPL ending in `switch-to-buffer' should pop up too.
 multi-vterm displays its fresh buffer that way, and plain

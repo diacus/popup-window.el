@@ -21,7 +21,14 @@ Wrap your REPL-launching function with ~make-repl-popup~:
 
 The wrapped function works like the original one, including its
 ~&rest~ arguments, but any buffer it creates named =*...*= is
-displayed in a bottom side window taking 30% of the frame height.
+displayed in a bottom side window taking 30% of the frame height
+by default.  Change ~popup-window-height~ to customize it — a
+float between 0 and 1 is a fraction of the frame height, an
+integer a fixed number of lines:
+
+#+begin_src emacs-lisp
+  (setq popup-window-height 0.5)
+#+end_src
 
 When the REPL process exits, its buffer is killed, which closes
 the popup window with it.

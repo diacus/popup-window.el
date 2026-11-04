@@ -32,15 +32,27 @@
 ;;; Code:
 (require 'cl-lib)
 
+(defgroup popup-window nil
+  "Run REPLs inside temporary popup windows."
+  :group 'tools)
+
+(defcustom popup-window-height 0.3
+  "Height of the popup side window.
+A float between 0 and 1 is a fraction of the frame height; an
+integer is a fixed number of lines."
+  :type '(choice (float :tag "Fraction of frame height" :value 0.3)
+                 (integer :tag "Lines"))
+  :group 'popup-window)
+
 (defmacro make-repl-popup (repl-function)
   "Run REPL-FUNCTION that inside a pop-up window."
   `(lambda (&rest args)
      (interactive)
      (let ((display-buffer-alist
-            '(("\\*.*\\*"
+            `(("\\*.*\\*"
                (display-buffer-in-side-window)
                (side . bottom)
-               (window-height . 0.3))))
+               (window-height . ,popup-window-height))))
            ;; Some REPLs switch with `switch-to-buffer' (multi-vterm
            ;; does), which never consults `display-buffer-alist'
            ;; unless this option is on: without it the popup never

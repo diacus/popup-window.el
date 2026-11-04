@@ -60,7 +60,7 @@ This is a single-file package without a manifest yet.  Put
 From the repository root:
 
 #+begin_src shell
-  emacs -Q --batch -L . -l test/popup-test.el -f ert-run-tests-batch-and-exit
+  emacs -Q --batch -L . -l test/popup-window-test.el -f ert-run-tests-batch-and-exit
 #+end_src
 
 A byte-compile check is also useful:

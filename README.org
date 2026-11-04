@@ -5,35 +5,39 @@ REPL-launching function so the REPL runs in a bottom side window
 instead of taking over your current window.  The buffer and its
 window are cleaned up automatically when the REPL process exits.
 
-* Usage
-
-Wrap your REPL-launching function with ~make-repl-popup~:
+Wrap your REPL-launching function with ~make-repl-popup~ and bind
+the expansion to a command name with ~defalias~:
 
 #+begin_src emacs-lisp
   (require 'popup-window)
   (require 'ielm)
 
-  (defun my/open-ielm ()
-    "Open ielm in a popup window."
-    (interactive)
-    (funcall (make-repl-popup #'ielm)))
+  (defalias 'my/open-ielm (make-repl-popup #'ielm))
+#+end_src
+
+This is the preferred form.  The macro expands to an interactive
+command with its own documentation, and ~defalias~ puts that
+expansion directly in the function cell, so ~C-h f~ on
+~my/open-ielm~, ~C-h k~ on any keybinding to it, and ~apropos~ all
+show the wrapper's documentation.  Bind it to keys as usual:
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c C-i") #'my/open-ielm)
 #+end_src
 
 The wrapped function works like the original one, including its
 ~&rest~ arguments, but any buffer it creates named =*...*= is
-displayed in a bottom side window taking 30% of the frame height
-by default.
+displayed in the side window configured by ~popup-window-side~ and
+~popup-window-height~: the bottom of the frame by default,
+taking 30% of the frame height.
 
-Wrapping an interactive command that prompts for its arguments
-also keeps the prompt: when you invoke the wrapper without
-arguments, the original command runs through its own interactive
-form.  ~term~, for example, prompts for the program to run:
+When you invoke the wrapper without arguments and the wrapped
+function is an interactive command that prompts for its
+arguments, it runs through its own interactive form, so the prompt
+still works: ~term~, for example, prompts for the program to run.
 
 #+begin_src emacs-lisp
-  (defun my/term-popup ()
-    "Open a term in a popup window."
-    (interactive)
-    (funcall (make-repl-popup #'term)))
+  (defalias 'my/term-popup (make-repl-popup #'term))
 #+end_src
 
 Change ~popup-window-height~ to customize the popup height — a

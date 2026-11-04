@@ -1,9 +1,9 @@
 #+TITLE: popup-window.el
 
 popup-window.el provides the ~make-repl-popup~ macro, which wraps a
-REPL-launching function so the REPL runs in a bottom side window
-instead of taking over your current window.  The buffer and its
-window are cleaned up automatically when the REPL process exits.
+REPL-launching function so the REPL runs in a side window instead
+of taking over your current window.  The buffer and its window are
+cleaned up automatically when the REPL process exits.
 
 Wrap your REPL-launching function with ~make-repl-popup~ and bind
 the expansion to a command name with ~defalias~:
@@ -26,8 +26,8 @@ show the wrapper's documentation.  Bind it to keys as usual:
 #+end_src
 
 The wrapped function works like the original one, including its
-~&rest~ arguments, but any buffer it creates named =*...*= is
-displayed in the side window configured by ~popup-window-side~ and
+~&rest~ arguments, but any buffer it displays named =*...*= is
+redirected to the side window configured by ~popup-window-side~ and
 ~popup-window-height~: the bottom of the frame by default,
 taking 30% of the frame height.
 
@@ -69,8 +69,8 @@ the popup window with it.
 steps:
 
 1. Binds the ~display-buffer-alist~ so that any buffer whose name
-   matches =\*.*\*= is shown via ~display-buffer-in-side-window~ in
-   a bottom side window, then runs the wrapped REPL function.
+   matches =\*.*\*= is shown via ~display-buffer-in-side-window~,
+   then runs the wrapped REPL function.
 2. Identifies the REPL buffer by diffing ~(buffer-list)~ before
    and after the call.
 3. Attaches a process sentinel that kills the buffer when the
@@ -85,7 +85,15 @@ Caveats worth knowing:
 - The REPL buffer is identified as the most recently used of the
   newly created buffers, so it relies on the REPL function being
   the one that displays its own buffer.
-- The cleanup sentinel only fires after a clean process exit.
+- The cleanup sentinel fires whenever the REPL process dies —
+  normally or abnormally, a nonzero exit included — so the cleanup
+  is guaranteed the moment the process is gone.  While the process
+  lives, the popup stays.
+- A buffer without a live process is left untouched; only the
+  REPL buffer with its process gets the sentinel treatment.
+- The wrapper's return value is the process sentinel, not the
+  REPL buffer; reach the buffer through the wrapped function
+  instead.
 
 * Installation
 

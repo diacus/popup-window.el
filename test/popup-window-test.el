@@ -86,6 +86,13 @@ Return PREDICATE's last value."
     (should (equal (nth 1 expansion) '(&rest args)))
     (should (member '(interactive) expansion))))
 
+(ert-deftest popup-window-test/expansion-has-a-docstring ()
+  "The expansion should carry a docstring naming the wrapped function.
+This is what `C-h f' and friends show for the generated wrapper."
+  (let ((expansion (macroexpand-1 '(make-repl-popup 'foo-repl))))
+    (should (stringp (nth 2 expansion)))
+    (should (string-match-p "foo-repl" (nth 2 expansion)))))
+
 (ert-deftest popup-window-test/expansion-applies-args-to-repl-function ()
   "The expansion should bind the REPL function once and apply ARGS to it.
 The binding also guards against double evaluation of a non-constant
